@@ -41,7 +41,7 @@ namespace UnityTemplateProjects
                 yaw = Mathf.Lerp(yaw, target.yaw, rotationLerpPct);
                 pitch = Mathf.Lerp(pitch, target.pitch, rotationLerpPct);
                 roll = Mathf.Lerp(roll, target.roll, rotationLerpPct);
-                
+
                 x = Mathf.Lerp(x, target.x, positionLerpPct);
                 y = Mathf.Lerp(y, target.y, positionLerpPct);
                 z = Mathf.Lerp(z, target.z, positionLerpPct);
@@ -53,7 +53,7 @@ namespace UnityTemplateProjects
                 t.position = new Vector3(x, y, z);
             }
         }
-        
+
         CameraState m_TargetCameraState = new CameraState();
         CameraState m_InterpolatingCameraState = new CameraState();
 
@@ -75,45 +75,45 @@ namespace UnityTemplateProjects
         public bool invertY = false;
 
 #if ENABLE_INPUT_SYSTEM
-        InputAction movementAction;
-        InputAction verticalMovementAction;
-        InputAction lookAction;
-        InputAction boostFactorAction;
-        bool        mouseRightButtonPressed;
+		InputAction movementAction;
+		InputAction verticalMovementAction;
+		InputAction lookAction;
+		InputAction boostFactorAction;
+		bool        mouseRightButtonPressed;
 
-        void Start()
-        {
-            var map = new InputActionMap("Simple Camera Controller");
+		void Start()
+		{
+			var map = new InputActionMap("Simple Camera Controller");
 
-            lookAction = map.AddAction("look", binding: "<Mouse>/delta");
-            movementAction = map.AddAction("move", binding: "<Gamepad>/leftStick");
-            verticalMovementAction = map.AddAction("Vertical Movement");
-            boostFactorAction = map.AddAction("Boost Factor", binding: "<Mouse>/scroll");
+			lookAction = map.AddAction("look", binding: "<Mouse>/delta");
+			movementAction = map.AddAction("move", binding: "<Gamepad>/leftStick");
+			verticalMovementAction = map.AddAction("Vertical Movement");
+			boostFactorAction = map.AddAction("Boost Factor", binding: "<Mouse>/scroll");
 
-            lookAction.AddBinding("<Gamepad>/rightStick").WithProcessor("scaleVector2(x=15, y=15)");
-            movementAction.AddCompositeBinding("Dpad")
-                .With("Up", "<Keyboard>/w")
-                .With("Up", "<Keyboard>/upArrow")
-                .With("Down", "<Keyboard>/s")
-                .With("Down", "<Keyboard>/downArrow")
-                .With("Left", "<Keyboard>/a")
-                .With("Left", "<Keyboard>/leftArrow")
-                .With("Right", "<Keyboard>/d")
-                .With("Right", "<Keyboard>/rightArrow");
-            verticalMovementAction.AddCompositeBinding("Dpad")
-                .With("Up", "<Keyboard>/pageUp")
-                .With("Down", "<Keyboard>/pageDown")
-                .With("Up", "<Keyboard>/e")
-                .With("Down", "<Keyboard>/q")
-                .With("Up", "<Gamepad>/rightshoulder")
-                .With("Down", "<Gamepad>/leftshoulder");
-            boostFactorAction.AddBinding("<Gamepad>/Dpad").WithProcessor("scaleVector2(x=1, y=4)");
+			lookAction.AddBinding("<Gamepad>/rightStick").WithProcessor("scaleVector2(x=15, y=15)");
+			movementAction.AddCompositeBinding("Dpad")
+				.With("Up", "<Keyboard>/w")
+				.With("Up", "<Keyboard>/upArrow")
+				.With("Down", "<Keyboard>/s")
+				.With("Down", "<Keyboard>/downArrow")
+				.With("Left", "<Keyboard>/a")
+				.With("Left", "<Keyboard>/leftArrow")
+				.With("Right", "<Keyboard>/d")
+				.With("Right", "<Keyboard>/rightArrow");
+			verticalMovementAction.AddCompositeBinding("Dpad")
+				.With("Up", "<Keyboard>/pageUp")
+				.With("Down", "<Keyboard>/pageDown")
+				.With("Up", "<Keyboard>/e")
+				.With("Down", "<Keyboard>/q")
+				.With("Up", "<Gamepad>/rightshoulder")
+				.With("Down", "<Gamepad>/leftshoulder");
+			boostFactorAction.AddBinding("<Gamepad>/Dpad").WithProcessor("scaleVector2(x=1, y=4)");
 
-            movementAction.Enable();
-            lookAction.Enable();
-            verticalMovementAction.Enable();
-            boostFactorAction.Enable();
-        }
+			movementAction.Enable();
+			lookAction.Enable();
+			verticalMovementAction.Enable();
+			boostFactorAction.Enable();
+		}
 #endif
 
         void OnEnable()
@@ -126,10 +126,10 @@ namespace UnityTemplateProjects
         {
             Vector3 direction = Vector3.zero;
 #if ENABLE_INPUT_SYSTEM
-            var moveDelta = movementAction.ReadValue<Vector2>();
-            direction.x = moveDelta.x;
-            direction.z = moveDelta.y;
-            direction.y = verticalMovementAction.ReadValue<Vector2>().y;
+			var moveDelta = movementAction.ReadValue<Vector2>();
+			direction.x = moveDelta.x;
+			direction.z = moveDelta.y;
+			direction.y = verticalMovementAction.ReadValue<Vector2>().y;
 #else
             if (Input.GetKey(KeyCode.W))
             {
@@ -158,7 +158,7 @@ namespace UnityTemplateProjects
 #endif
             return direction;
         }
-        
+
         void Update()
         {
             // Exit Sample  
@@ -166,9 +166,9 @@ namespace UnityTemplateProjects
             if (IsEscapePressed())
             {
                 Application.Quit();
-				#if UNITY_EDITOR
-				UnityEditor.EditorApplication.isPlaying = false; 
-				#endif
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#endif
             }
 
             // Hide and lock cursor when right mouse button pressed
@@ -190,13 +190,13 @@ namespace UnityTemplateProjects
                 var mouseMovement = GetInputLookRotation() * Time.deltaTime * 5;
                 if (invertY)
                     mouseMovement.y = -mouseMovement.y;
-                
+
                 var mouseSensitivityFactor = mouseSensitivityCurve.Evaluate(mouseMovement.magnitude);
 
                 m_TargetCameraState.yaw += mouseMovement.x * mouseSensitivityFactor;
                 m_TargetCameraState.pitch += mouseMovement.y * mouseSensitivityFactor;
             }
-            
+
             // Translation
             var translation = GetInputTranslationDirection() * Time.deltaTime;
 
@@ -205,7 +205,7 @@ namespace UnityTemplateProjects
             {
                 translation *= 10.0f;
             }
-            
+
             // Modify movement by a boost factor (defined in Inspector and modified in play mode through the mouse scroll wheel)
             boost += GetBoostFactor();
             translation *= Mathf.Pow(2.0f, boost);
@@ -224,7 +224,7 @@ namespace UnityTemplateProjects
         float GetBoostFactor()
         {
 #if ENABLE_INPUT_SYSTEM
-            return boostFactorAction.ReadValue<Vector2>().y * 0.01f;
+			return boostFactorAction.ReadValue<Vector2>().y * 0.01f;
 #else
             return Input.mouseScrollDelta.y * 0.2f;
 #endif
@@ -233,7 +233,7 @@ namespace UnityTemplateProjects
         Vector2 GetInputLookRotation()
         {
 #if ENABLE_INPUT_SYSTEM
-            return lookAction.ReadValue<Vector2>();
+			return lookAction.ReadValue<Vector2>();
 #else
             return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * 10;
 #endif
@@ -242,9 +242,9 @@ namespace UnityTemplateProjects
         bool IsBoostPressed()
         {
 #if ENABLE_INPUT_SYSTEM
-            bool boost = Keyboard.current != null ? Keyboard.current.leftShiftKey.isPressed : false; 
-            boost |= Gamepad.current != null ? Gamepad.current.xButton.isPressed : false;
-            return boost;
+			bool boost = Keyboard.current != null ? Keyboard.current.leftShiftKey.isPressed : false; 
+			boost |= Gamepad.current != null ? Gamepad.current.xButton.isPressed : false;
+			return boost;
 #else
             return Input.GetKey(KeyCode.LeftShift);
 #endif
@@ -254,7 +254,7 @@ namespace UnityTemplateProjects
         bool IsEscapePressed()
         {
 #if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null ? Keyboard.current.escapeKey.isPressed : false; 
+			return Keyboard.current != null ? Keyboard.current.escapeKey.isPressed : false; 
 #else
             return Input.GetKey(KeyCode.Escape);
 #endif
@@ -263,9 +263,9 @@ namespace UnityTemplateProjects
         bool IsCameraRotationAllowed()
         {
 #if ENABLE_INPUT_SYSTEM
-            bool canRotate = Mouse.current != null ? Mouse.current.rightButton.isPressed : false;
-            canRotate |= Gamepad.current != null ? Gamepad.current.rightStick.ReadValue().magnitude > 0 : false;
-            return canRotate;
+			bool canRotate = Mouse.current != null ? Mouse.current.rightButton.isPressed : false;
+			canRotate |= Gamepad.current != null ? Gamepad.current.rightStick.ReadValue().magnitude > 0 : false;
+			return canRotate;
 #else
             return Input.GetMouseButton(1);
 #endif
@@ -274,7 +274,7 @@ namespace UnityTemplateProjects
         bool IsRightMouseButtonDown()
         {
 #if ENABLE_INPUT_SYSTEM
-            return Mouse.current != null ? Mouse.current.rightButton.isPressed : false;
+			return Mouse.current != null ? Mouse.current.rightButton.isPressed : false;
 #else
             return Input.GetMouseButtonDown(1);
 #endif
@@ -283,7 +283,7 @@ namespace UnityTemplateProjects
         bool IsRightMouseButtonUp()
         {
 #if ENABLE_INPUT_SYSTEM
-            return Mouse.current != null ? !Mouse.current.rightButton.isPressed : false;
+			return Mouse.current != null ? !Mouse.current.rightButton.isPressed : false;
 #else
             return Input.GetMouseButtonUp(1);
 #endif
